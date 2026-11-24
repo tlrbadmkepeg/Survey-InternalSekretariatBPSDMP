@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Survei Layanan Internal BPSDMP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: resmi, tenang, premium minimalis dengan interaksi yang halus.
+   IDEA: lembar undangan resmi — satu kolom simetris yang menuntun responden langkah demi langkah.
+   PICTURE: judul berwibawa, garis emas, alur tiga langkah, lalu dua tombol keputusan.
+   COLOUR and TYPE: navy #17365D, putih, emas #C5A46D; Plus Jakarta Sans + Inter.
+   LAYOUT: bilah logo kiri atas, konten terpusat, tanya-jawab ringkas, footer. */
+:root{color-scheme:light;--navy:#17365D;--navy2:#0f2643;--gold:#C5A46D;--goldsoft:#f6f0e4;--ink:#1d2939;--mute:#5b6577;--line:#e4e7ec;--bg:#fff;--tint:#f5f7fa}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.75 Inter,system-ui,sans-serif;display:flex;flex-direction:column;min-height:100vh;overflow-x:clip}
+.top{display:flex;align-items:center;gap:20px;padding:16px max(5vw,20px);border-bottom:1px solid var(--line);flex-wrap:wrap;position:sticky;top:0;background:rgba(255,255,255,.94);backdrop-filter:blur(6px);z-index:5;transition:box-shadow .2s}
+.top.shadow{box-shadow:0 6px 18px -12px rgba(23,54,93,.35)}
+.logo{height:56px;width:auto;flex:none}
+.inst{font-family:"Plus Jakarta Sans",Inter,sans-serif;color:var(--navy);font-size:13px;font-weight:700;line-height:1.4;letter-spacing:.04em;padding-left:20px;border-left:1.5px solid var(--gold)}
+main{flex:1;display:flex;justify-content:center;padding:clamp(40px,7vw,80px) max(5vw,20px)}
+.col{width:100%;max-width:760px;text-align:center}
+h1,h2,h3,.lead{font-family:"Plus Jakarta Sans",Inter,sans-serif;color:var(--navy)}
+h1{font-weight:800;font-size:clamp(26px,4.2vw,40px);line-height:1.15;margin:0;text-wrap:balance;letter-spacing:.01em}
+.year{font-family:"Plus Jakarta Sans",Inter,sans-serif;color:var(--navy);font-weight:600;font-size:clamp(17px,2.2vw,21px);letter-spacing:.18em;margin:12px 0 0}
+.rule{width:96px;height:2px;background:var(--gold);border:0;margin:26px auto 34px}
+
+/* Ringkasan informasi */
+.facts{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 26px;list-style:none;padding:0;margin:0 0 34px;font-size:14.5px;color:var(--navy);font-weight:500}
+.facts li{display:inline-flex;align-items:center;gap:8px}
+.facts svg{width:18px;height:18px;flex:none;stroke:var(--gold);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+.narasi{text-align:justify;text-align-last:center;hyphens:auto}
+.narasi p{margin:0 0 16px}
+
+/* Alur langkah */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:38px 0 0;padding:0;list-style:none;position:relative}
+.steps::before{content:"";position:absolute;top:19px;left:16.66%;right:16.66%;height:1px;background:var(--line)}
+.steps li{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:14px;color:var(--mute);padding:0 6px;line-height:1.4}
+.steps .n{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1.5px solid var(--line);font:700 15px "Plus Jakarta Sans",sans-serif;color:var(--mute);transition:all .3s}
+.steps li.on .n{border-color:var(--gold);background:var(--goldsoft);color:var(--navy)}
+.steps li.on{color:var(--navy);font-weight:600}
+
+.ask{margin:40px auto 0;padding-top:34px;border-top:1px solid var(--line)}
+.ask h2{font-size:clamp(18px,2.4vw,22px);line-height:1.4;font-weight:700;margin:0 auto 26px;max-width:34ch;text-wrap:balance}
+.btns{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:54px;min-width:240px;padding:12px 28px;border-radius:6px;font:600 15px/1.2 Inter,sans-serif;letter-spacing:.08em;text-decoration:none;cursor:pointer;border:1.5px solid var(--navy);transition:background .2s,color .2s,transform .2s,box-shadow .2s}
+.btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s}
+.btn.yes{background:var(--navy);color:#fff}
+.btn.yes:hover{background:var(--navy2);transform:translateY(-2px);box-shadow:0 10px 22px -12px rgba(23,54,93,.7)}
+.btn.yes:hover svg{transform:translateX(4px)}
+.btn.no{background:#fff;color:var(--navy)}
+.btn.no:hover{background:var(--tint);transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.btn.busy{pointer-events:none;opacity:.9}
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:sp .8s linear infinite;display:none}
+.btn.busy .spin{display:inline-block}.btn.busy .arr{display:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.hint{font-size:13.5px;color:var(--mute);margin:18px 0 0;min-height:1.6em}
+
+/* Tanya-jawab */
+.faq{margin:48px 0 0;text-align:left;border-top:1px solid var(--line)}
+.faq h3{font-size:17px;text-align:center;margin:30px 0 12px}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 4px;font-weight:600;color:var(--navy);font-size:16px;min-height:44px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{color:var(--navy2)}
+.faq .pm{width:20px;height:20px;flex:none;position:relative}
+.faq .pm::before,.faq .pm::after{content:"";position:absolute;left:3px;right:3px;top:9px;height:2px;background:var(--gold);transition:transform .25s}
+.faq .pm::after{transform:rotate(90deg)}
+.faq details[open] .pm::after{transform:rotate(0)}
+.faq .a{padding:0 4px 18px;color:var(--mute);font-size:15.5px;line-height:1.7}
+
+/* Pesan tidak bersedia */
+.msg{display:none}
+.msg p{margin:0 0 16px}
+.msg .lead{font-weight:700;font-size:clamp(20px,2.8vw,24px)}
+.msg .ico{width:56px;height:56px;margin:0 auto 18px;border-radius:50%;border:1.5px solid var(--gold);display:grid;place-items:center}
+.msg .ico svg{width:26px;height:26px;stroke:var(--navy);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+body.declined .intro{display:none}
+body.declined .msg{display:block}
+
+footer{border-top:1px solid var(--line);text-align:center;padding:22px 20px;font-size:13.5px;color:var(--mute);line-height:1.6}
+
+/* Gerak halus */
+@media(prefers-reduced-motion:no-preference){
+  .rv{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .rv.in{opacity:1;transform:none}
+  .rule{width:0;transition:width .9s ease .3s}.rule.in{width:96px}
+  .swap{animation:fade .45s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}html{scroll-behavior:auto}}
+
+@media(max-width:600px){
+  body{font-size:16px}.logo{height:44px}.top{gap:10px;padding-block:12px}
+  .inst{border-left:0;padding-left:0;font-size:12px;flex-basis:100%}
+  .narasi{text-align:left;text-align-last:auto}
+  .btn{width:100%;min-width:0}
+  .facts{flex-direction:column;align-items:center;gap:8px}
+  .steps li{font-size:12.5px}
+}
+</style>
+</head>
+<body>
+<header class="top" id="top">
+  <img class="logo" src="logo-kemendag.png" width="960" height="291" alt="Kementerian Perdagangan Republik Indonesia">
+  <div class="inst">BADAN PENGEMBANGAN<br>SUMBER DAYA MANUSIA PERDAGANGAN</div>
+</header>
+
+<main><div class="col">
+  <h1 class="rv">SURVEI KEPUASAN LAYANAN INTERNAL BPSDMP</h1>
+  <p class="year rv">TAHUN 2026</p>
+  <hr class="rule" id="rule">
+
+  <section class="intro" id="intro" aria-labelledby="q">
+    <ul class="facts rv">
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Sekitar 5 menit</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6"/></svg>Identitas cukup unit kerja</li>
+      <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Jawaban dijaga kerahasiaannya</li>
+    </ul>
+
+    <div class="narasi rv">
+      <p>Dalam rangka meningkatkan kualitas pelayanan internal, Badan Pengembangan Sumber Daya Manusia Perdagangan (BPSDMP) Kementerian Perdagangan melaksanakan Survei Kepuasan Layanan Internal Tahun 2026.</p>
+      <p>Survei ini bertujuan untuk memperoleh penilaian dan masukan dari Aparatur Sipil Negara (ASN) terhadap kualitas layanan administrasi dan dukungan manajemen di lingkungan BPSDMP.</p>
+      <p>Hasil survei akan digunakan sebagai bahan evaluasi dan dasar penyusunan langkah perbaikan untuk meningkatkan kualitas pelayanan internal secara berkelanjutan.</p>
+      <p>Partisipasi Saudara sangat berarti dalam mendukung terwujudnya pelayanan internal yang profesional, transparan, akuntabel, dan berintegritas.</p>
+    </div>
+
+    <ol class="steps rv" aria-label="Alur pengisian survei">
+      <li class="on" id="st1"><span class="n">1</span>Pernyataan kesediaan</li>
+      <li id="st2"><span class="n">2</span>Pengisian formulir</li>
+      <li id="st3"><span class="n">3</span>Kirim jawaban</li>
+    </ol>
+
+    <div class="ask rv">
+      <h2 id="q">Apakah Saudara bersedia berpartisipasi dalam Survei Kepuasan Layanan Internal BPSDMP Tahun 2026?</h2>
+      <div class="btns">
+        <a class="btn yes" id="b-yes" href="https://form.jotform.com/263262169886066" target="_top" rel="noopener">
+          <span class="spin" aria-hidden="true"></span><span class="lbl">YA, SAYA BERSEDIA</span>
+          <svg class="arr" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <button class="btn no" type="button" id="b-no">TIDAK BERSEDIA</button>
+      </div>
+      <p class="hint" id="hint" aria-live="polite"></p>
+    </div>
+
+    <div class="faq rv">
+      <h3>Informasi Survei</h3>
+      <details><summary>Siapa yang dapat mengisi survei ini?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a">Seluruh ASN pada sepuluh unit kerja di lingkungan BPSDMP yang pernah menerima atau menggunakan layanan internal selama tahun 2026.</div></details>
+      <details><summary>Apakah saya perlu mencantumkan nama atau NIP?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a">Tidak. Identitas yang diminta hanya unit kerja Saudara. Nama, NIP, email, usia, jenis kelamin, dan status kepegawaian tidak diminta.</div></details>
+      <details><summary>Apa saja yang dinilai?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="a">Saudara memilih satu jenis layanan internal yang pernah diterima, lalu menilai sembilan unsur pelayanan dengan skala 1–4, serta dapat menuliskan kendala dan saran secara opsional.</div></details>
+    </div>
+  </section>
+
+  <section class="msg" id="msg" aria-live="polite">
+    <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9-9a5 5 0 0 1 9-3 5 5 0 0 1 9 3c-2 4.5-9 9-9 9z"/></svg></div>
+    <p class="lead">Terima kasih atas perhatian Saudara.</p>
+    <p>Partisipasi dalam Survei Kepuasan Layanan Internal BPSDMP bersifat sukarela. Kami menghargai keputusan Saudara dan tetap berkomitmen untuk meningkatkan kualitas pelayanan internal secara berkelanjutan.</p>
+    <div class="btns" style="margin-top:28px"><button class="btn no" type="button" id="b-back">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>KEMBALI KE HALAMAN UTAMA</button></div>
+  </section>
+</div></main>
+
+<footer>© 2026 Badan Pengembangan Sumber Daya Manusia Perdagangan<br>Kementerian Perdagangan Republik Indonesia</footer>
+
+<script>
+{
+  const body = document.body, intro = document.getElementById('intro'), msg = document.getElementById('msg');
+  const yes = document.getElementById('b-yes'), hint = document.getElementById('hint');
+  const st1 = document.getElementById('st1'), st2 = document.getElementById('st2');
+  const HINT = hint.textContent;
+
+  /* Tampil bertahap saat dimuat dan saat digulir */
+  const els = [...document.querySelectorAll('.rv')];
+  const reveal = el => el.classList.add('in');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); } }), {threshold: .12});
+    els.forEach((el, i) => { el.style.transitionDelay = Math.min(i, 4) * 90 + 'ms'; io.observe(el); });
+  } else els.forEach(reveal);
+  requestAnimationFrame(() => document.getElementById('rule').classList.add('in'));
+
+  /* Bayangan header saat digulir */
+  const top = document.getElementById('top');
+  addEventListener('scroll', () => top.classList.toggle('shadow', scrollY > 8), {passive: true});
+
+  /* Tombol Ya: tautan langsung ke Jotform, dengan status sedang membuka */
+  yes.addEventListener('mouseenter', () => { st1.classList.remove('on'); st2.classList.add('on'); });
+  yes.addEventListener('mouseleave', () => { if (!yes.classList.contains('busy')) { st2.classList.remove('on'); st1.classList.add('on'); } });
+  yes.addEventListener('click', () => {
+    yes.classList.add('busy'); yes.querySelector('.lbl').textContent = 'MEMBUKA FORMULIR…';
+    st1.classList.remove('on'); st2.classList.add('on');
+    hint.textContent = 'Formulir survei sedang dibuka. Jawaban baru tersimpan setelah Saudara menekan tombol kirim pada formulir.';
+    setTimeout(reset, 4000);
+  });
+  const reset = () => {
+    yes.classList.remove('busy'); yes.querySelector('.lbl').textContent = 'YA, SAYA BERSEDIA';
+    st2.classList.remove('on'); st1.classList.add('on'); hint.textContent = HINT;
+  };
+  addEventListener('pageshow', reset);
+
+  /* Tidak bersedia dan kembali */
+  const swap = on => {
+    body.classList.toggle('declined', on);
+    const shown = on ? msg : intro;
+    shown.classList.remove('swap'); void shown.offsetWidth; shown.classList.add('swap');
+    if (!on) shown.querySelectorAll('.rv').forEach(reveal);
+    scrollTo({top: 0});
+    (on ? document.getElementById('b-back') : document.getElementById('b-no')).focus({preventScroll: true});
+  };
+  document.getElementById('b-no').addEventListener('click', () => swap(true));
+  document.getElementById('b-back').addEventListener('click', () => swap(false));
+
+  /* Tanya-jawab: satu terbuka pada satu waktu */
+  const ds = document.querySelectorAll('.faq details');
+  ds.forEach(d => d.addEventListener('toggle', () => { if (d.open) ds.forEach(o => { if (o !== d) o.open = false; }); }));
+}
+</script>
+</body>
+</html>
